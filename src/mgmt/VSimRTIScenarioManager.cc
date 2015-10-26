@@ -23,8 +23,7 @@
 #include "VSimRTICommunicationCmd_m.h"
 #include "VSimRTIAppPacket_m.h"
 #include "VSimRTIScenarioManager.h"
-
-#include <sstream>
+#include "VSimRTIExtendedMobilityNode.h"
 
 
 Define_Module(VSimRTIScenarioManager);
@@ -72,8 +71,10 @@ void VSimRTIScenarioManager::initialize() {
  */
 void VSimRTIScenarioManager::handleMessage(cMessage *msg) {
 
-	int 	nodeId;
-	Coord 	position;
+	int			nodeId;
+	Coord		position;
+	const char*	roadId = NULL;
+	float		lanePos;
 
 	// Mobility dependent commands
 	if (strcmp(msg->getName(), "VSimRTIMobilityCmd") == 0) {
@@ -82,8 +83,11 @@ void VSimRTIScenarioManager::handleMessage(cMessage *msg) {
 			for (unsigned int i = 0; i < cmd->getNodeIdArraySize(); i++) {
 				nodeId = cmd->getNodeId(i);
 				position = cmd->getPosition(i);
+				roadId = cmd->getRoadId(i);
+				lanePos = cmd->getLanePos(i);
 				if (debug) EV << "VSimRTIScenarioManager ADD_NODES: " << nodeId << " at position " << position.x << "," << position.y << endl;
 				addNode(nodeId, position);
+				updateNodeLaneInformation(nodeId, roadId, lanePos);
 			}
 		}
 		else if (msg->getKind() == CMD::ADD_RSU_NODES) {
@@ -98,8 +102,11 @@ void VSimRTIScenarioManager::handleMessage(cMessage *msg) {
 			for (unsigned int i = 0; i < cmd->getNodeIdArraySize(); i++) {
 				nodeId = cmd->getNodeId(i);
 				position = cmd->getPosition(i);
+				roadId = cmd->getRoadId(i);
+				lanePos = cmd->getLanePos(i);
 				if (debug) EV << "VSimRTIScenarioManager MOVE_NODES: " << nodeId << " to position " << position.x << "," << position.y << endl;
 				moveNode(nodeId, position);
+				updateNodeLaneInformation(nodeId, roadId, lanePos);
 			}
 		}
 		else if (msg->getKind() == CMD::REMOVE_NODES) {
@@ -139,11 +146,11 @@ void VSimRTIScenarioManager::handleMessage(cMessage *msg) {
  */
 void VSimRTIScenarioManager::finish() {
 	static bool once = false;
-	
+
 	if (!once) {
 		// toggle the once flag
 		once = true;
-
+		
 		// Tidy up and finish simulation
 		while (nodes.begin() != nodes.end()) {
 			removeNode(nodes.begin()->first);
@@ -231,12 +238,19 @@ void VSimRTIScenarioManager::addNode(int nodeId, Coord& position) {
 			mm->setNextPosition(position);
 		}
 		else {
+			// Workaround by Raphael Bialon for invalid array accessess
+			int gateSizeIn = std::max(this->gateSize("vSimRTIUdpIn"), nodeId);
+			int gateSizeOut = std::max(this->gateSize("vSimRTIUdpOut"), nodeId);
+
 			// Initialize vsimrtiunreliableapp module (connection)
-			this->setGateSize("vSimRTIUdpOut", this->gateSize("vSimRTIUdpOut") + 1);
+//			this->setGateSize("vSimRTIUdpOut", this->gateSize("vSimRTIUdpOut") + 1);
+			this->setGateSize("vSimRTIUdpOut", gateSizeOut + 1);
 			this->gate("vSimRTIUdpOut", nodeId)->connectTo(ua->gate("fedIn"));
-			this->setGateSize("vSimRTIUdpIn", this->gateSize("vSimRTIUdpIn") + 1);
+			this->setGateSize("vSimRTIUdpIn", gateSizeIn + 1);
 			ua->gate("fedOut")->connectTo(this->gate("vSimRTIUdpIn", nodeId));
 			ua->setExternalId(nodeId);
+
+			// Workaround END
 		}
 	}
 
@@ -308,6 +322,38 @@ void VSimRTIScenarioManager::moveNode(int nodeId, Coord& position) {
 		}
 
 		if (debug) EV << "VSimRTIScenarioManager moved vehicle " << nodeId << " to position " << position.x << "," << position.y << " at time " << simTime() << endl;
+	}
+}
+
+/**
+ * Updates lane information of simulated node
+ *
+ * @param nodeId
+ * 		VSimRTI id for simulated node
+ * @param roadId
+ * 		id of nodes current lane/road
+ * @param lanePos
+ * 		new position of node on lane
+ */
+void VSimRTIScenarioManager::updateNodeLaneInformation(int nodeId, const char* roadId, float lanePos) {
+
+	cModule* mod = getManagedModule(nodeId);
+
+	if (!mod) {
+		EV << "WARNING: Node " << nodeId << " not mapped" << endl;
+	} else {
+		VSimRTIExtendedMobilityNode* emNode = dynamic_cast<VSimRTIExtendedMobilityNode*>(mod);
+
+		if (!emNode) {
+			if (debug) EV << "Node " << nodeId << " is no subclass of VSimRTIExtendedMobility. Ignoring extended mobility information." << endl;
+ 		} else {
+			// Set new values
+			emNode->setRoadId(roadId);
+			emNode->setLanePos(lanePos);
+			// And inform node upon this
+			emNode->extendedMobilityUpdated();
+			// No need to free roadId, this is done when the Mobility message gets free'd
+		}
 	}
 }
 

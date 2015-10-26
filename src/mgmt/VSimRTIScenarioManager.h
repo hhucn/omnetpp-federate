@@ -99,6 +99,9 @@ class VSimRTIScenarioManager : public cSimpleModule {
 		/** Update method for node positions. */
 		virtual void moveNode(int nodeId, Coord& position);
 
+		/** Update method for node lane information (lane id, position on lane) */
+		virtual void updateNodeLaneInformation(int nodeId, const char* roadId, float lanePos);
+
 		/** Remove and clean up method for finished nodes. */
 		virtual void removeNode(int nodeId);
 
