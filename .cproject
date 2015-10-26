@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 5.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage2">
+	<storageModule moduleId="org.eclipse.cdt.core.settings">
+		<cconfiguration id="org.omnetpp.cdt.gnu.config.release.542280763">
+			<storageModule externalCElementFile="org.omnetpp.cdt.gnu.config.release.542280763_org.eclipse.cdt.core.settings" id="org.omnetpp.cdt.gnu.config.release.542280763" name="gcc-release"/>
+			<storageModule externalCElementFile="org.omnetpp.cdt.gnu.config.release.542280763_cdtBuildSystem" version="4.0.0"/>
+			<storageModule externalCElementFile="org.omnetpp.cdt.gnu.config.release.542280763_org.eclipse.cdt.core.externalSettings"/>
+			<storageModule externalCElementFile="org.omnetpp.cdt.gnu.config.release.542280763_org.eclipse.cdt.core.language.mapping"/>
+		</cconfiguration>
+		<cconfiguration id="org.omnetpp.cdt.gnu.config.debug.1736155990">
+			<storageModule externalCElementFile="org.omnetpp.cdt.gnu.config.debug.1736155990_org.eclipse.cdt.core.settings" id="org.omnetpp.cdt.gnu.config.debug.1736155990" name="gcc-debug"/>
+			<storageModule externalCElementFile="org.omnetpp.cdt.gnu.config.debug.1736155990_cdtBuildSystem" version="4.0.0"/>
+			<storageModule externalCElementFile="org.omnetpp.cdt.gnu.config.debug.1736155990_org.eclipse.cdt.core.externalSettings"/>
+			<storageModule externalCElementFile="org.omnetpp.cdt.gnu.config.debug.1736155990_org.eclipse.cdt.core.language.mapping"/>
+		</cconfiguration>
+	</storageModule>
+	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+		<project id="omnetpp-federate.org.omnetpp.cdt.omnetppProjectType.1658690723" name="OMNeT++ Simulation" projectType="org.omnetpp.cdt.omnetppProjectType"/>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile"/>
+		<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile">
+			<buildOutputProvider>
+				<openAction enabled="true" filePath=""/>
+				<parser enabled="true"/>
+			</buildOutputProvider>
+			<scannerInfoProvider id="makefileGenerator">
+				<runAction arguments="-f ${project_name}_scd.mk" command="make" useDefault="true"/>
+				<parser enabled="true"/>
+			</scannerInfoProvider>
+		</profile>
+		<profile id="org.omnetpp.cdt.OmnetppGCCPerProjectProfile">
+			<buildOutputProvider>
+				<openAction enabled="true" filePath=""/>
+				<parser enabled="true"/>
+			</buildOutputProvider>
+			<scannerInfoProvider id="specsFile">
+				<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
+				<parser enabled="true"/>
+			</scannerInfoProvider>
+		</profile>
+		<scannerConfigBuildInfo instanceId="org.omnetpp.cdt.gnu.config.release.542280763">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.omnetpp.cdt.OmnetppGCCPerProjectProfile"/>
+			<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile">
+				<buildOutputProvider>
+					<openAction enabled="true" filePath=""/>
+					<parser enabled="true"/>
+				</buildOutputProvider>
+				<scannerInfoProvider id="makefileGenerator">
+					<runAction arguments="-f ${project_name}_scd.mk" command="make" useDefault="true"/>
+					<parser enabled="true"/>
+				</scannerInfoProvider>
+			</profile>
+			<profile id="org.omnetpp.cdt.OmnetppGCCPerProjectProfile">
+				<buildOutputProvider>
+					<openAction enabled="true" filePath=""/>
+					<parser enabled="true"/>
+				</buildOutputProvider>
+				<scannerInfoProvider id="specsFile">
+					<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="gcc" useDefault="true"/>
+					<parser enabled="true"/>
+				</scannerInfoProvider>
+			</profile>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="org.omnetpp.cdt.gnu.config.debug.1736155990">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.omnetpp.cdt.OmnetppGCCPerProjectProfile"/>
+		</scannerConfigBuildInfo>
+	</storageModule>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="gcc-debug">
+			<resource resourceType="PROJECT" workspacePath="/omnetpp-federate"/>
+		</configuration>
+		<configuration configurationName="gcc-release">
+			<resource resourceType="PROJECT" workspacePath="/omnetpp-federate"/>
+		</configuration>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+</cproject>
