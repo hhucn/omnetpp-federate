@@ -25,4 +25,6 @@ cplusplus {{
 message VSimRTIMobilityCmd {
     int 	nodeId[];		// id of vehicle or rsu
     Coord 	position[];		// projected position coordinates for mobility
+    string	roadId[];		// id of vehicles current road/edge (directed)
+    double	lanePos[];		// position of vehicle on edge
 }
