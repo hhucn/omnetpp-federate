@@ -5,7 +5,7 @@
 			<folderInfo id="org.omnetpp.cdt.gnu.config.debug.1736155990." name="/" resourcePath="">
 				<toolChain id="org.omnetpp.cdt.gnu.toolchain.debug.627184450" name="GCC for OMNeT++" superClass="org.omnetpp.cdt.gnu.toolchain.debug">
 					<targetPlatform binaryParser="org.eclipse.cdt.core.ELF;org.eclipse.cdt.core.MachO;org.eclipse.cdt.core.PE" id="org.omnetpp.cdt.targetPlatform.49611408" isAbstract="false" name="Windows, Linux, Mac" osList="win32,linux,macosx" superClass="org.omnetpp.cdt.targetPlatform"/>
-					<builder id="org.omnetpp.cdt.gnu.builder.debug.2049694471" keepEnvironmentInBuildfile="false" name="OMNeT++ Make Builder (opp_makemake)" superClass="org.omnetpp.cdt.gnu.builder.debug"/>
+					<builder autoBuildTarget="all" buildPath="${ProjDirPath}" cleanBuildTarget="clean" enableAutoBuild="false" enableCleanBuild="true" enabledIncrementalBuild="true" id="org.omnetpp.cdt.gnu.builder.debug.2049694471" incrementalBuildTarget="all" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="OMNeT++ Make Builder (opp_makemake)" parallelBuildOn="true" parallelizationNumber="optimal" superClass="org.omnetpp.cdt.gnu.builder.debug"/>
 					<tool id="cdt.managedbuild.tool.gnu.archiver.base.1522953490" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.1583669422" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
 						<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1428168761" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -15,6 +15,10 @@
 					</tool>
 					<tool id="cdt.managedbuild.tool.gnu.c.linker.base.1137344161" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.base"/>
 					<tool id="cdt.managedbuild.tool.gnu.cpp.linker.base.476418748" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.base">
+						<option id="gnu.cpp.link.option.paths.1835978195" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
+							<listOptionValue builtIn="false" value="&quot;${workspace_loc:/tbus-vsimrti/out/gcc-debug/src}&quot;"/>
+							<listOptionValue builtIn="false" value="&quot;${workspace_loc:/inetmanet/out/gcc-debug/src}&quot;"/>
+						</option>
 						<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.197654691" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 							<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 							<additionalInput kind="additionalinput" paths="$(LIBS)"/>
