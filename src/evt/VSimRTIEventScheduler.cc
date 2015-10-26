@@ -50,6 +50,11 @@ void sigproc(int signo) {
 	pthread_exit(NULL);
 }
 
+/**
+ * Function for for_each call. Deletes the given pointer array.
+ * @param roadId Road id string
+ */
+void deleteRoadId(char* roadId) { delete[] roadId; }
 
 /**
  * Constructor.
@@ -90,13 +95,12 @@ void VSimRTIEventScheduler::startRun() {
  * Final method, called at simulation end.
  */
 void VSimRTIEventScheduler::endRun() {
-
 	static bool once = false;
 
 	if (!once) {
 		// toggle the once flag
 		once = true;
-		
+
 		disconnectFromAmbassador();
 		pthread_cancel(receiveInteractionsThread);
 		pthread_join(receiveInteractionsThread, NULL);
@@ -243,6 +247,10 @@ void* VSimRTIEventScheduler::receiveInteractions(void* p) {
 	vector<int> 	nodeIdVec;
 	Coord 			position;
 	vector<Coord> 	positionVec;
+	char*			roadId;
+	vector<char*>	roadIdVec;
+	double			lanePos;
+	vector<double>	lanePosVec;
 
 	// Setup connection to OMNeT++ ambassador (as a server)
 	th->connectToAmbassador();
@@ -309,9 +317,13 @@ void* VSimRTIEventScheduler::receiveInteractions(void* p) {
 			while (th->cmdChannel->readCommand() != CMD::END) {
 				nodeId = th->cmdChannel->readId();
 				position = th->cmdChannel->readCoordinates();
-				if (th->debug) EV << "VSimRTIEventScheduler ADD_NODES: " << nodeId << " at position " << position.x << "," << position.y << endl;
+				roadId = th->cmdChannel->readRoadId();
+				lanePos = th->cmdChannel->readLanePosition();
+				if (th->debug) EV << "VSimRTIEventScheduler ADD_NODES: " << nodeId << " at position " << position.x << "," << position.y << " on lane " << roadId << " with distance " << lanePos << endl;
 				nodeIdVec.push_back(nodeId);
 				positionVec.push_back(position);
+				roadIdVec.push_back(roadId);
+				lanePosVec.push_back(lanePos);
 			}
 			unsigned int numNodes = nodeIdVec.size();
 			if (numNodes > 0) {
@@ -322,16 +334,25 @@ void* VSimRTIEventScheduler::receiveInteractions(void* p) {
 				cmdMessage->setArrival(mgmt, -1);
 				cmdMessage->setNodeIdArraySize(numNodes);
 				cmdMessage->setPositionArraySize(numNodes);
+				cmdMessage->setRoadIdArraySize(numNodes);
+				cmdMessage->setLanePosArraySize(numNodes);
 				for (unsigned int i = 0; i < numNodes; i++) {
 					cmdMessage->setNodeId(i, nodeIdVec[i]);
 					cmdMessage->setPosition(i, positionVec[i]);
+					cmdMessage->setRoadId(i, roadIdVec[i]);
+					cmdMessage->setLanePos(i, lanePosVec[i]);
 				}
 
 				simulation.msgQueue.insert(cmdMessage);
 				simulation.msgQueue.sort();
 
+				// Delete roadId string memory
+				std::for_each(roadIdVec.begin(), roadIdVec.end(), deleteRoadId);
+
 				nodeIdVec.clear();
 				positionVec.clear();
+				roadIdVec.clear();
+				lanePosVec.clear();
 			}
 			if (th->debug) EV << "VSimRTIEventScheduler finished processing of command" << endl;
 			th->cmdChannel->writeStatus(true, "");
@@ -375,9 +396,13 @@ void* VSimRTIEventScheduler::receiveInteractions(void* p) {
 			while (th->cmdChannel->readCommand() != CMD::END) {
 				nodeId = th->cmdChannel->readId();
 				position = th->cmdChannel->readCoordinates();
-				if (th->debug) EV << "VSimRTIEventScheduler MOVE_NODES: " << nodeId << " to position " << position.x << "," << position.y << endl;
+				roadId = th->cmdChannel->readRoadId();
+				lanePos = th->cmdChannel->readLanePosition();
+				if (th->debug) EV << "VSimRTIEventScheduler MOVE_NODES: " << nodeId << " to position " << position.x << "," << position.y << " on lane " << roadId << " with distance " << lanePos << endl;
 				nodeIdVec.push_back(nodeId);
 				positionVec.push_back(position);
+				roadIdVec.push_back(roadId);
+				lanePosVec.push_back(lanePos);
 			}
 			unsigned int numNodes = nodeIdVec.size();
 			if (numNodes > 0) {
@@ -388,16 +413,25 @@ void* VSimRTIEventScheduler::receiveInteractions(void* p) {
 				cmdMessage->setArrival(mgmt, -1);
 				cmdMessage->setNodeIdArraySize(numNodes);
 				cmdMessage->setPositionArraySize(numNodes);
+				cmdMessage->setRoadIdArraySize(numNodes);
+				cmdMessage->setLanePosArraySize(numNodes);
 				for (unsigned int i = 0; i < numNodes; i++) {
 					cmdMessage->setNodeId(i, nodeIdVec[i]);
 					cmdMessage->setPosition(i, positionVec[i]);
+					cmdMessage->setRoadId(i, roadIdVec[i]);
+					cmdMessage->setLanePos(i, lanePosVec[i]);
 				}
 
 				simulation.msgQueue.insert(cmdMessage);
 				simulation.msgQueue.sort();
 
+				// Delete roadId string memory
+				std::for_each(roadIdVec.begin(), roadIdVec.end(), deleteRoadId);
+
 				nodeIdVec.clear();
 				positionVec.clear();
+				roadIdVec.clear();
+				lanePosVec.clear();
 			}
 			if (th->debug) EV << "VSimRTIEventScheduler finished processing of command" << endl;
 			th->cmdChannel->writeStatus(true, "");
