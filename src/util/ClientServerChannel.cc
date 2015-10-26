@@ -74,6 +74,11 @@ int ClientServerChannel::prepareConnection(string host, int port) {
 	if (servsock < 0)
 		cerr << "Error: ClientServerChannel could not create socket to connect to Ambassador - " << strerror(errno) << endl;
 
+	int reuseYes = 1;
+	if (setsockopt(servsock, SOL_SOCKET, SO_REUSEADDR, &reuseYes, sizeof(int)) < 0) {
+		cerr << "Error: ClientServerChannel could not use SO_REUSEADDR on socket to Ambassador - " << strerror(errno) << endl;
+	}
+
 	if (bind(servsock, (struct sockaddr*) &servaddr, sizeof(servaddr)) < 0)
 		cerr << "Warn: ClientServerChannel could not bind socket to Ambassador - " << strerror(errno) << endl;
 
@@ -264,6 +269,30 @@ int ClientServerChannel::readAddressMarker(void) {
 }
 
 /**
+ * Read the road id.
+ *
+ * ATTENTION: This method allocates a new string which has to be freed (deleted) after use!
+ *
+ * @return
+ * 		road id
+ */
+char* ClientServerChannel::readRoadId() {
+
+	return readString();
+}
+
+/**
+ * Read the lane position.
+ *
+ * @return
+ * 		lane position
+ */
+float ClientServerChannel::readLanePosition() {
+
+	return readFloat();
+}
+
+/**
  * Informs OMNeT++ Ambassador about success of last interaction.
  *
  * @param stat
@@ -366,6 +395,30 @@ char ClientServerChannel::readChar(void) {
 		cRuntimeError("readChar Error: %d", rec);
 
 	return c;
+}
+
+/**
+ * Provides read functionality for std::string reading ASCII literals.
+ *
+ * ATTENTION: This method allocates a new string which has to be freed (deleted) after use!
+ *
+ * @return
+ * 		ASCII string
+ */
+char* ClientServerChannel::readString(void) {
+	int length = readInt();
+	char* buffer = new char[length+1];
+	int rec = 0;
+
+	if (length > 0) {
+		rec = recv(sock, buffer, length, 0);
+		if (rec != length) {
+			cRuntimeError("readString Error: %d", rec);
+		}
+	}
+	buffer[length] = 0x00;
+
+	return buffer;
 }
 
 /**

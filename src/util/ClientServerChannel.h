@@ -114,6 +114,12 @@ class ClientServerChannel {
 		/** Read the address type marker. */
 		virtual int			readAddressMarker(void);
 
+		/** Read the road id */
+		virtual char*		readRoadId(void);
+
+		/** Read the position on the lane */
+		virtual float		readLanePosition(void);
+
 		/** Byte protocol control method for writeStatus. */
 		virtual void		writeStatus(bool stat, string statMsg);
 
@@ -144,6 +150,9 @@ class ClientServerChannel {
 
 		/** Basic communication method for readInt. */
 		virtual char		readChar(void);
+
+		/** Basic communication method for readString. */
+		virtual char*		readString(void);
 
 		/** Basic communication method for readLong. */
 		virtual unsigned long long	readLong(void);
