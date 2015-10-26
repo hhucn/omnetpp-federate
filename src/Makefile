@@ -57,7 +57,7 @@ INCLUDE_PATH = \
 EXTRA_OBJS =
 
 # Additional libraries (-L, -l options)
-LIBS = -L../../inetmanet/out/gcc-debug/src/  -lpthread -linet
+LIBS = -L../../inetmanet/out/gcc-debug/src/ -L../../tbus-vsimrti/out/gcc-debug/src/  -lpthread -linet -ltbus-vsimrti
 LIBS += -Wl,-rpath,`abspath ../../inetmanet/out/gcc-debug/src/`
 
 # Output directory
